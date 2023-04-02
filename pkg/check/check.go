@@ -1,7 +1,6 @@
 package check
 
 import (
-	"log"
 	"os/exec"
 	"strings"
 
@@ -23,10 +22,10 @@ type Check struct {
 func GetIp() string {
 	
 	// run script to get ip
-	ip := exec.Command("bash", "script.sh")
+	ip := exec.Command("sh", "script.sh")
 	out, err := ip.Output()
 	if err != nil {
-		log.Println(err)
+		println(err)
 	}
 
 	// turn out into string
@@ -34,13 +33,13 @@ func GetIp() string {
 
 	// parse output based on \n
 	newlines := strings.Split(string(newOut), "\n")
-	// log.Println(newString[5])
+	// println(newString[5])
 
 	// parse output based on :
 	newString := strings.Split(newlines[5], ":")
 	newString[1] = strings.TrimSpace(newString[1])
 	ipAddr := newString[1]
-	// log.Println("here:" + ipAddr)
+	// println("here:" + ipAddr)
 
 	return ipAddr
 }
@@ -52,12 +51,12 @@ func CheckIp() string {
 	// get old ip
 	oldIp := env.GetKey("CURRENT_IP")
 
-	log.Print("old ip: " + oldIp + " current ip: " + currentIp)
+	print("old ip: " + oldIp + " current ip: " + currentIp)
 	if currentIp != oldIp {
 		// set new ip
 		env.SetKey("CURRENT_IP", currentIp)
-		log.Println("current env: " + env.GetKey("CURRENT_IP"))
-		log.Println("New IP found: " + currentIp)
+		println("current env: " + env.GetKey("CURRENT_IP"))
+		println("New IP found: " + currentIp)
 
 		return currentIp
 	}

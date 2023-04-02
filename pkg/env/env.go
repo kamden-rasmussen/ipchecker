@@ -24,6 +24,6 @@ func GetKey(key string) string {
 }
 
 func SetKey(key string, value string) {
-	log.Println("setting env: " + key + " to " + value)
+	println("setting env: " + key + " to " + value)
 	os.Setenv(key, value)
 }

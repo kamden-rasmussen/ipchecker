@@ -1,8 +1,6 @@
 package email
 
 import (
-	"log"
-
 	"github.com/kamden-rasmussen/ipchecker/pkg/env"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
@@ -27,12 +25,12 @@ func SendEmail(newIp string) error {
 	client := sendgrid.NewSendClient(env.GetKey("SENDGRID_API_KEY"))
 	response, err := client.Send(message)
 	if err != nil {
-		log.Println(err)
+		println(err)
 		return err
 	} else {
-		log.Println(response.StatusCode)
-		log.Println(response.Body)
-		log.Println(response.Headers)
+		println(response.StatusCode)
+		// println(response.Body)
+		// println(response.Headers)
 	}
 	return nil
 }

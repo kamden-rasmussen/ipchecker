@@ -13,6 +13,7 @@ import (
 func main() {
 	// open log file
 	openLogFile()
+	println("Starting IP Checker")
 
 	// load env
 	env.InitEnv()
@@ -39,7 +40,7 @@ func RunCheck(){
 	if ip != "" {
 		err := email.SendEmail(ip)
 		if err != nil {
-			log.Println(err)
+			println(err)
 		}
 	}
 }
