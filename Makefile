@@ -9,7 +9,7 @@ logs:
 cleanlogs:
 	rm logs.txt
 
-dockerbuild:
+build:
 	docker build --tag ipchecker .
 
 up:
