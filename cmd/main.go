@@ -37,6 +37,13 @@ func openLogFile() {
 
 func RunCheck(){
 	ip := check.CheckIp()
+	if ip == "outage" {
+		err := email.SendErrorEmail()
+		if err != nil {
+			println(err)
+		}
+		return
+	}
 	if ip != "" {
 		err := email.SendEmail(ip)
 		if err != nil {

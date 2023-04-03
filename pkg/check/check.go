@@ -2,6 +2,7 @@ package check
 
 import (
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"github.com/kamden-rasmussen/ipchecker/pkg/env"
@@ -30,7 +31,7 @@ func GetIp() string {
 
 	// turn out into string
 	newOut := out[:len(out)-1]
-	println("\ncurrent return " + string(newOut) + "\n")
+	println("\ncurrent return \n" + string(newOut) + "\n")
 
 	// parse output based on \n
 	newlines := strings.Split(string(newOut), "\n")
@@ -48,6 +49,15 @@ func GetIp() string {
 func CheckIp() string {
 	// get current ip
 	currentIp := GetIp()
+	if currentIp == "" {
+		outageCount, _ := strconv.Atoi(env.GetKey("OUTAGE_COUNT"))
+		env.SetKey("OUTAGE_COUNT", strconv.Itoa(outageCount + 1))
+		println("Outage count: " + env.GetKey("OUTAGE_COUNT"))
+		if outageCount > 12 {
+			return "outage"
+		}
+		return ""
+	}
 
 	// get old ip
 	oldIp := env.GetKey("CURRENT_IP")
