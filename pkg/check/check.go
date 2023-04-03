@@ -30,6 +30,7 @@ func GetIp() string {
 
 	// turn out into string
 	newOut := out[:len(out)-1]
+	println("\ncurrent return " + string(newOut) + "\n")
 
 	// parse output based on \n
 	newlines := strings.Split(string(newOut), "\n")
@@ -51,7 +52,7 @@ func CheckIp() string {
 	// get old ip
 	oldIp := env.GetKey("CURRENT_IP")
 
-	print("old ip: " + oldIp + " current ip: " + currentIp)
+	print("old ip: " + oldIp + " current ip: " + currentIp + "\n")
 	if currentIp != oldIp {
 		// set new ip
 		env.SetKey("CURRENT_IP", currentIp)
