@@ -49,7 +49,7 @@ func GetIp() string {
 func CheckIp() string {
 	// get current ip
 	currentIp := GetIp()
-	if currentIp == "" {
+	if currentIp == "" || currentIp == "No answer"{
 		outageCount, _ := strconv.Atoi(env.GetKey("OUTAGE_COUNT"))
 		env.SetKey("OUTAGE_COUNT", strconv.Itoa(outageCount + 1))
 		println("Outage count: " + env.GetKey("OUTAGE_COUNT"))
@@ -58,7 +58,7 @@ func CheckIp() string {
 		}
 		return ""
 	}
-
+	env.SetKey("OUTAGE_COUNT", strconv.Itoa(0))
 	// get old ip
 	oldIp := env.GetKey("CURRENT_IP")
 
