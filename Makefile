@@ -13,7 +13,7 @@ build:
 	docker build --tag ipchecker .
 
 up:
-	docker run -d --name ipchecker ipchecker
+	docker run -d --restart unless-stopped --name ipchecker ipchecker
 
 down:
 	docker stop ipchecker
