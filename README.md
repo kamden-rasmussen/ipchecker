@@ -32,8 +32,8 @@ Before running IPChecker, you need to have the following:
 4. Build the application using the following command:
 
     ```bash
-    make dockerbuild
-    make dockerrun
+    make build
+    make run
     ```
 
 ## License
