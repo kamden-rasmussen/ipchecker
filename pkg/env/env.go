@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func InitEnv(){
+func InitEnv() {
 	// open log file
 	openEnvFile()
 }

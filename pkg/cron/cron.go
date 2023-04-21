@@ -6,7 +6,7 @@ type Cron struct {
 	cronService *cron.Cron
 }
 
-func NewCron() *Cron{
+func NewCron() *Cron {
 	cronService := cron.New()
 	return &Cron{cronService: cronService}
 }
