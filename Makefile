@@ -12,13 +12,13 @@ cleanlogs:
 build:
 	docker build --tag ipchecker .
 
-up:
+up: build
 	docker run -d --restart unless-stopped --name ipchecker ipchecker
 
 down:
 	docker stop ipchecker
 
-delete:
+delete: down
 	docker rm ipchecker
 
 dl:
