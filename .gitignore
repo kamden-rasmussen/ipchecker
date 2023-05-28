@@ -1,3 +1,4 @@
 .env
 logs.txt
 main
+.mypy_cache

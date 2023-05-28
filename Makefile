@@ -26,3 +26,9 @@ dl:
 
 exec:
 	docker exec -it ipchecker /bin/sh
+
+get-dns-id:
+	python3 scripts/getDnsId.py
+
+manual-update:
+	python3 scripts/updateDns.py
