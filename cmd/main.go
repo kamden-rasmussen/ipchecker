@@ -20,6 +20,8 @@ func main() {
 	// load env
 	env.InitEnv()
 
+	RunCheck()
+
 	// set up cron jobs
 	cronService := cron.NewCron()
 	cronService.AddFunc("*/5 * * * *", RunCheck)
@@ -64,9 +66,11 @@ func RunCheck() {
 		}
 		if boolCloudflare {
 			code, err := cloudflare.PutNewIP(ip)
-			if err != nil || code != 201 {
+			if err != nil || code != 200 {
 				println("failed to update Cloudflare DNS record. Status code " + strconv.Itoa(code))
-				println(err.Error())
+				email.SendCloudflareErrorEmail()
+			} else {
+				println("successfully updated Cloudflare DNS record")
 			}
 		}
 	}
