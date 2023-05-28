@@ -36,6 +36,22 @@ Before running IPChecker, you need to have the following:
     make run
     ```
 
+## Cloudflare integration
+
+I have added the ability to update a DNS record on cloudflare.
+
+You need to add a few things to your env file
+```CLOUDFLARE_ZONE_ID=``` (Zone ID)
+```CLOUDFLARE_DNS_ID=``` (DNS record ID)
+```CLOUDFLARE_API_KEY=``` (API key from cloudflare)
+```CLOUDFLARE_EMAIL=``` (email used to login to cloudflare)
+```DOMAIN_NAME=``` (example.com)
+```CLOUDFLARE=``` (set to true)
+
+Find your ZoneID [here](https://developers.cloudflare.com/fundamentals/get-started/basic-tasks/find-account-and-zone-ids/).
+
+Find your DNSID by ensuring your envs are up to date then running ```make get-dns-id```.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
