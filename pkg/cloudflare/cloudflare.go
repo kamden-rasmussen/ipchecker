@@ -14,7 +14,7 @@ import (
 //      -H "X-Auth-Email: user@example.com" \
 //      -H "Authorization": yourauthkeyhere" \
 //      -H "Content-Type: application/json" \
-//      --data '{"type":"A","name":"example.com","content":"yournewiphere","ttl":{},"proxied":false}'
+//      --data '{"type":"A","name":"example.com","content":"yournewiphere","ttl":1,"proxied":false}'
 
 func PutNewIP(ip string) (int, error) {
 	zoneID := env.GetKey("CLOUDFLARE_ZONE_ID")
