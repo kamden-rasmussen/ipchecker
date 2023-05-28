@@ -9,7 +9,7 @@ print(loaded)
 # //      -H "X-Auth-Email: user@example.com" \
 # //      -H "X-Auth-Key: yourauthkeyhere" \
 # //      -H "Content-Type: application/json" \
-# //      --data '{"type":"A","name":"example.com","content":"yournewiphere","ttl":{},"proxied":false}'
+# //      --data '{"type":"A","name":"example.com","content":"yournewiphere","ttl":1,"proxied":false}'
 
 # set env path
 
@@ -22,8 +22,10 @@ env_dns_id = str(os.environ['CLOUDFLARE_DNS_ID'])
 cloudflare_api = "https://api.cloudflare.com/client/v4/zones/" + env_zone_id + "/dns_records/" + env_dns_id
 headers = {'Authorization':env_bearer_token, 'X-Auth-Email':env_email, 'Content-Type':'application/json'}
 
+body = '{"type":"A","name":"' + env_domain + '","content":"111.111.111.111","ttl":1,"proxied":false}'
+
 cloudflare_dns = cloudflare_api
-cloudflare_dns_response = requests.put(cloudflare_dns, headers=headers, data='{"type":"A","name":"' + env_domain + '","content":"11.111.111.111","ttl":{},"proxied":false}')
+cloudflare_dns_response = requests.put(cloudflare_dns, headers=headers, data=body)
 print(cloudflare_dns_response.status_code)
 
 if cloudflare_dns_response.status_code == 200:
