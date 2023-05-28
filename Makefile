@@ -31,4 +31,4 @@ get-dns-id:
 	python3 scripts/getDnsId.py
 
 manual-update:
-	python3 scripts/updateDns.py
+	python3 scripts/updateDNS.py
