@@ -16,7 +16,7 @@ func SendEmail(newIp string) error {
 	// email
 	from := mail.NewEmail("IP Checker", senderEmail)
 	subject := "New IP Address"
-	to := mail.NewEmail("Kamden", receiverEmail)
+	to := mail.NewEmail("Friend", receiverEmail)
 
 	// body
 	plainTextContent := "Your new IP address is: " + newIp
@@ -45,7 +45,36 @@ func SendErrorEmail() error {
 	// email
 	from := mail.NewEmail("IP Checker", senderEmail)
 	subject := "IP Checker Error"
-	to := mail.NewEmail("Kamden", receiverEmail)
+	to := mail.NewEmail("Friend", receiverEmail)
+
+	// body
+	plainTextContent := errMess
+	htmlContent := "<strong>" + errMess + "</strong>"
+
+	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+
+	client := sendgrid.NewSendClient(env.GetKey("SENDGRID_API_KEY"))
+	response, err := client.Send(message)
+	if err != nil {
+		println(err)
+		return err
+	} else {
+		println(response.StatusCode)
+	}
+	return nil
+}
+
+func SendCloudflareErrorEmail() error {
+
+	errMess := "There was an error updating your Cloudflare DNS record. Please check your internet connection and try again."
+
+	senderEmail := env.GetKey("SENDER_EMAIL")
+	receiverEmail := env.GetKey("RECEIVER_EMAIL")
+
+	// email
+	from := mail.NewEmail("IP Checker", senderEmail)
+	subject := "IP Checker Error"
+	to := mail.NewEmail("Friend", receiverEmail)
 
 	// body
 	plainTextContent := errMess
