@@ -3,8 +3,10 @@ package main
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/kamden-rasmussen/ipchecker/pkg/check"
+	"github.com/kamden-rasmussen/ipchecker/pkg/cloudflare"
 	"github.com/kamden-rasmussen/ipchecker/pkg/cron"
 	"github.com/kamden-rasmussen/ipchecker/pkg/email"
 	"github.com/kamden-rasmussen/ipchecker/pkg/env"
@@ -36,6 +38,17 @@ func openLogFile() {
 }
 
 func RunCheck() {
+	shouldUseCloudflare := os.Getenv("CLOUDFLARE")
+	boolCloudflare := false
+	var err error
+	// turn shouldUseCloudflare into a bool
+	if shouldUseCloudflare != "" {
+		boolCloudflare, err = strconv.ParseBool(shouldUseCloudflare)
+		if err != nil {
+			println(err)
+		}
+	}
+
 	ip := check.CheckIp()
 	if ip == "outage" {
 		err := email.SendErrorEmail()
@@ -48,6 +61,13 @@ func RunCheck() {
 		err := email.SendEmail(ip)
 		if err != nil {
 			println(err)
+		}
+		if boolCloudflare {
+			code, err := cloudflare.PutNewIP(ip)
+			if err != nil || code != 201 {
+				println("failed to update Cloudflare DNS record. Status code " + strconv.Itoa(code))
+				println(err.Error())
+			}
 		}
 	}
 }
