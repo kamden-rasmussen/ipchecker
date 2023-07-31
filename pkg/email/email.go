@@ -9,6 +9,10 @@ import (
 )
 
 func SendEmail(newIp string) error {
+	if env.GetKey("EMAIL") == "" {
+		// Don't send an email if they don't have it defined
+		return nil
+	}
 
 	senderEmail := env.GetKey("SENDER_EMAIL")
 	receiverEmail := env.GetKey("RECEIVER_EMAIL")
@@ -28,7 +32,7 @@ func SendEmail(newIp string) error {
 	response, err := client.Send(message)
 	if err != nil || response.StatusCode != 202 {
 		println("error sending email. Status code " + strconv.Itoa((response.StatusCode)))
-		println(err)
+		println(err.Error())
 		return err
 	}
 	println("email sent successfully")
@@ -36,6 +40,10 @@ func SendEmail(newIp string) error {
 }
 
 func SendErrorEmail() error {
+	if env.GetKey("EMAIL") == "" {
+		// Don't send an email if they don't have it defined
+		return nil
+	}
 
 	errMess := "There was an error checking your IP address. Please check your internet connection and try again."
 
