@@ -5,12 +5,14 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/kamden-rasmussen/ipchecker/pkg/check"
 	"github.com/kamden-rasmussen/ipchecker/pkg/cloudflare"
 	"github.com/kamden-rasmussen/ipchecker/pkg/cron"
 	"github.com/kamden-rasmussen/ipchecker/pkg/email"
 	"github.com/kamden-rasmussen/ipchecker/pkg/env"
+	"github.com/kamden-rasmussen/ipchecker/pkg/godaddy"
 )
 
 type DnsHost interface {
@@ -46,23 +48,31 @@ func openLogFile() {
 
 func RunCheck() {
 	var dnsHost DnsHost
-	dnsProvider := os.Getenv("DNSHOST")
+	dnsProvider := env.GetKey("DNSHOST")
 
-	// turn UPDATEDNS env var into a bool
-	shouldUpdate, err := strconv.ParseBool(os.Getenv("UPDATEDNS"))
+	// Get bool env vars
+	shouldUpdate, err := strconv.ParseBool(env.GetKey("UPDATEDNS"))
 	if err != nil {
-		println("Bool err: ", err.Error())
+		println(err.Error())
 		return
 	}
 
-	switch dnsProvider {
-	case "Cloudflare":
+	switch strings.ToUpper(dnsProvider) {
+	case "CLOUDFLARE":
 		dnsHost = cloudflare.Cloudflare{
 			env.GetKey("ZONE_ID"),
 			env.GetKey("DNS_ID"),
 			env.GetKey("EMAIL"),
 			"Bearer " + env.GetKey("API_KEY"),
 			env.GetKey("DOMAIN_NAME"),
+		}
+	case "GODADDY":
+		dnsHost = godaddy.Godaddy{
+			env.GetKey("DOMAIN_NAME"),
+			env.GetKey("DNS_RECORD_TYPE"),
+			env.GetKey("DNS_RECORD_NAME"),
+			env.GetKey("API_KEY"),
+			env.GetKey("API_SECRET"),
 		}
 	default:
 		fmt.Println("Not implemented yet")
@@ -82,13 +92,14 @@ func RunCheck() {
 		if err != nil {
 			println(err.Error())
 		}
+
 		if shouldUpdate {
 			code, err := dnsHost.PutNewIP(ip)
 			if err != nil || code != 200 {
-				println("Failed to update Cloudflare DNS record. Status code " + strconv.Itoa(code))
+				fmt.Printf("Failed to update DNS record. Status code %d\n", code)
 				email.SendCloudflareErrorEmail()
 			} else {
-				println("Successfully updated Cloudflare DNS record")
+				println("Successfully updated DNS record")
 			}
 		}
 	}
