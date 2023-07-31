@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -11,6 +12,10 @@ import (
 	"github.com/kamden-rasmussen/ipchecker/pkg/email"
 	"github.com/kamden-rasmussen/ipchecker/pkg/env"
 )
+
+type DnsHost interface {
+	PutNewIP(string) (int, error)
+}
 
 func main() {
 	// open log file
@@ -40,37 +45,50 @@ func openLogFile() {
 }
 
 func RunCheck() {
-	shouldUseCloudflare := os.Getenv("CLOUDFLARE")
-	boolCloudflare := false
-	var err error
-	// turn shouldUseCloudflare into a bool
-	if shouldUseCloudflare != "" {
-		boolCloudflare, err = strconv.ParseBool(shouldUseCloudflare)
-		if err != nil {
-			println(err)
+	var dnsHost DnsHost
+	dnsProvider := os.Getenv("DNSHOST")
+
+	// turn UPDATEDNS env var into a bool
+	shouldUpdate, err := strconv.ParseBool(os.Getenv("UPDATEDNS"))
+	if err != nil {
+		println("Bool err: ", err.Error())
+		return
+	}
+
+	switch dnsProvider {
+	case "Cloudflare":
+		dnsHost = cloudflare.Cloudflare{
+			env.GetKey("ZONE_ID"),
+			env.GetKey("DNS_ID"),
+			env.GetKey("EMAIL"),
+			"Bearer " + env.GetKey("API_KEY"),
+			env.GetKey("DOMAIN_NAME"),
 		}
+	default:
+		fmt.Println("Not implemented yet")
+		return
 	}
 
 	ip := check.CheckIp()
 	if ip == "outage" {
 		err := email.SendErrorEmail()
 		if err != nil {
-			println(err)
+			println(err.Error())
 		}
 		return
 	}
 	if ip != "" {
 		err := email.SendEmail(ip)
 		if err != nil {
-			println(err)
+			println(err.Error())
 		}
-		if boolCloudflare {
-			code, err := cloudflare.PutNewIP(ip)
+		if shouldUpdate {
+			code, err := dnsHost.PutNewIP(ip)
 			if err != nil || code != 200 {
-				println("failed to update Cloudflare DNS record. Status code " + strconv.Itoa(code))
+				println("Failed to update Cloudflare DNS record. Status code " + strconv.Itoa(code))
 				email.SendCloudflareErrorEmail()
 			} else {
-				println("successfully updated Cloudflare DNS record")
+				println("Successfully updated Cloudflare DNS record")
 			}
 		}
 	}

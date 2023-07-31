@@ -1,13 +1,19 @@
 package cloudflare
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"net/http"
-
-	"github.com/kamden-rasmussen/ipchecker/pkg/env"
+	"strings"
 )
+
+type Cloudflare struct {
+	ZoneID     string
+	DnsID      string
+	Email      string
+	ApiKey     string
+	DomainName string
+}
 
 // example curl request
 // curl -X PUT "https://api.cloudflare.com/client/v4/zones/yourzoneidhere/dns_records/yourdnsidhere" \
@@ -16,25 +22,20 @@ import (
 //      -H "Content-Type: application/json" \
 //      --data '{"type":"A","name":"example.com","content":"yournewiphere","ttl":1,"proxied":false}'
 
-func PutNewIP(ip string) (int, error) {
-	zoneID := env.GetKey("CLOUDFLARE_ZONE_ID")
-	dnsID := env.GetKey("CLOUDFLARE_DNS_ID")
-	email := env.GetKey("CLOUDFLARE_EMAIL")
-	apiKey := "Bearer " + env.GetKey("CLOUDFLARE_API_KEY")
-	domainName := env.GetKey("DOMAIN_NAME")
+func (c Cloudflare) PutNewIP(ip string) (int, error) {
 
 	// add ip to the body
-	body := fmt.Sprintf(`{"type":"A","name":"%s","content":"%s","ttl":1,"proxied":false}`, domainName, ip)
+	body := fmt.Sprintf(`{"type":"A","name":"%s","content":"%s","ttl":1,"proxied":false}`, c.DomainName, ip)
 
 	// create the request
-	req, err := http.NewRequest("PUT", "https://api.cloudflare.com/client/v4/zones/"+zoneID+"/dns_records/"+dnsID, bytes.NewReader([]byte(body)))
+	req, err := http.NewRequest("PUT", "https://api.cloudflare.com/client/v4/zones/"+c.ZoneID+"/dns_records/"+c.DnsID, strings.NewReader(body))
 	if err != nil {
 		return -1, err
 	}
 
 	// add the headers
-	req.Header.Add("X-Auth-Email", email)
-	req.Header.Add("Authorization", apiKey)
+	req.Header.Add("X-Auth-Email", c.Email)
+	req.Header.Add("Authorization", c.ApiKey)
 	req.Header.Add("Content-Type", "application/json")
 
 	// send the request
@@ -51,7 +52,7 @@ func PutNewIP(ip string) (int, error) {
 		if err != nil {
 			panic(err)
 		}
-		println("error updating ip address with cloudflare")
+		println("Error updating ip address with cloudflare")
 		print(string(respBody))
 		return resp.StatusCode, err
 	}
