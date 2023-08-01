@@ -9,7 +9,7 @@ import (
 )
 
 func SendEmail(newIp string) error {
-	if env.GetKey("EMAIL") == "" {
+	if env.GetKey("SENDGRID_API_KEY") == "" {
 		// Don't send an email if they don't have it defined
 		return nil
 	}
@@ -40,7 +40,7 @@ func SendEmail(newIp string) error {
 }
 
 func SendErrorEmail() error {
-	if env.GetKey("EMAIL") == "" {
+	if env.GetKey("SENDGRID_API_KEY") == "" {
 		// Don't send an email if they don't have it defined
 		return nil
 	}
