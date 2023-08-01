@@ -75,7 +75,7 @@ func RunCheck() {
 			env.GetKey("API_SECRET"),
 		}
 	default:
-		fmt.Println("Not implemented yet")
+		println("Not implemented yet")
 		return
 	}
 
