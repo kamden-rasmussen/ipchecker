@@ -1,15 +1,18 @@
 # IPChecker
 
-IPChecker is a simple Go application that periodically checks your public IP address and sends you an email when it changes. This can be useful if you need to remotely access your home network and your ISP assigns you a dynamic IP address.
+IPChecker is a simple Go application that periodically checks your public IP address and can send you an email when it changes. This can be useful if you need to remotely access your home network and your ISP assigns you a dynamic IP address. Used for Dynamic Domain Name Service (DDNS) purposes.
 
 ## Prerequisites
 
 Before running IPChecker, you need to have the following:
 
+1. A stationary system that can run Go applications
+2. Docker installed on the system
+
+If you want to use SendGrid, you will also need the following
+
 1. A working email account that can send and receive emails
 2. A SendGrid account and API key
-3. A stationary system that can run Go applications
-4. Docker installed on the system
 
 ## Installation
 
@@ -23,10 +26,7 @@ Before running IPChecker, you need to have the following:
 3. Set the necessary environment variables by creating a .env file at the root of the project directory. The following variables are required:
 
     ```bash
-    SENDER_EMAIL #SET THIS TO YOUR EMAIL ADDRESS
-    RECEIVER_EMAIL #SET THIS TO THE EMAIL ADDRESS YOU WANT TO RECEIVE THE ALERTS
     CURRENT_IP #SET THIS TO 11.111.111.111
-    SENDGRID_API_KEY
     ```
 
 4. Build the application using the following command:
@@ -36,21 +36,42 @@ Before running IPChecker, you need to have the following:
     make run
     ```
 
-## Cloudflare integration
+## Environment Variables
 
-I have added the ability to update a DNS record on cloudflare.
+### Cloudflare:
 
-You need to add a few things to your env file
-```CLOUDFLARE_ZONE_ID=``` (Zone ID)
-```CLOUDFLARE_DNS_ID=``` (DNS record ID)
-```CLOUDFLARE_API_KEY=``` (API key from cloudflare)
-```CLOUDFLARE_EMAIL=``` (email used to login to cloudflare)
-```DOMAIN_NAME=``` (example.com)
-```CLOUDFLARE=``` (set to true)
+| Name             | Description                       |
+|  --------        |  -------                          |
+| ZONE_ID          | Your DNS [zone ID](https://developers.cloudflare.com/fundamentals/get-started/basic-tasks/find-account-and-zone-ids/). Can also be found by updating all env variables and running `make get-dns-id`               |
+| DNS_ID           | The id of the DNS record          |
+| API_KEY          | API key from Cloudflare           |
+| CLOUDFLARE_EMAIL | Email used to login to Cloudflare |
+| DOMAIN_NAME      | The domain you want updated       |
 
-Find your ZoneID [here](https://developers.cloudflare.com/fundamentals/get-started/basic-tasks/find-account-and-zone-ids/).
+### GoDaddy:
 
-Find your DNSID by ensuring your envs are up to date then running ```make get-dns-id```.
+| Name            | Description                                                  |
+|  --------       |  -------                                                     |
+| API_KEY         | The API key from https://developer.godaddy.com/getstarted    |
+| API_SECRET      | The API secret from https://developer.godaddy.com/getstarted |
+| DNS_RECORD_NAME | The subdomain, can be '@' for your plain domain              |
+| DNS_RECORD_TYPE | Record type. A, AAAA, MX, etc.                               |
+| DOMAIN_NAME     | The domain without the subdomain                             |
+
+
+### SendGrid:
+
+| Name             | Description                         |
+|  --------        |  -------                            |
+| SENDER_EMAIL     | Email to send the notification from |
+| RECEIVER_EMAIL   | Email to send the notification to   |
+| SENDGRID_API_KEY | API key for SendGrid                |
+
+### Misc:
+
+| Name            | Description    |
+|  --------       |  -------       |
+| CURRENT_IP | Set this to be any IP value. Ex "111.111.111.111". Used as reference during the IP check to see if the IP has changed |
 
 ## License
 
