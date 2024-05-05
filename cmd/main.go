@@ -74,6 +74,8 @@ func RunCheck() {
 			env.GetKey("API_KEY"),
 			env.GetKey("API_SECRET"),
 		}
+	case "NA": // if you do not have a DNS set up and just want the email
+		break
 	default:
 		println("Not implemented yet")
 		return
