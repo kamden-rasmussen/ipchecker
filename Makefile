@@ -21,6 +21,8 @@ down:
 delete: down
 	docker rm ipchecker
 
+reset: delete up
+
 dl:
 	docker logs -f ipchecker
 

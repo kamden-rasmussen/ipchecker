@@ -60,19 +60,19 @@ func RunCheck() {
 	switch strings.ToUpper(dnsProvider) {
 	case "CLOUDFLARE":
 		dnsHost = cloudflare.Cloudflare{
-			env.GetKey("ZONE_ID"),
-			env.GetKey("DNS_ID"),
-			env.GetKey("EMAIL"),
-			"Bearer " + env.GetKey("API_KEY"),
-			env.GetKey("DOMAIN_NAME"),
+			env.GetKey("CLOUDFLARE_ZONE_ID"),
+			env.GetKey("CLOUDFLARE_DNS_ID"),
+			env.GetKey("CLOUDFLARE_EMAIL"),
+			"Bearer " + env.GetKey("CLOUDFLARE_API_KEY"),
+			env.GetKey("CLOUDFLARE_DOMAIN_NAME"),
 		}
 	case "GODADDY":
 		dnsHost = godaddy.Godaddy{
-			env.GetKey("DOMAIN_NAME"),
-			env.GetKey("DNS_RECORD_TYPE"),
-			env.GetKey("DNS_RECORD_NAME"),
-			env.GetKey("API_KEY"),
-			env.GetKey("API_SECRET"),
+			env.GetKey("GODADDY_DOMAIN_NAME"),
+			env.GetKey("GODADDY_DNS_RECORD_TYPE"),
+			env.GetKey("GODADDY_DNS_RECORD_NAME"),
+			env.GetKey("GODADDY_API_KEY"),
+			env.GetKey("GODADDY_API_SECRET"),
 		}
 	case "NA": // if you do not have a DNS set up and just want the email
 		break
