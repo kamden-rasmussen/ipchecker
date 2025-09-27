@@ -67,8 +67,8 @@ func (s SendGridProvider) SendErrorEmail() error {
 	return nil
 }
 
-func (s SendGridProvider) SendCloudflareErrorEmail() error {
-	errMess := "There was an error updating your Cloudflare DNS record. Please check your internet connection and try again."
+func (s SendGridProvider) SendDnsErrorEmail() error {
+	errMess := "There was an error updating your DNS record. Please check your internet connection and try again."
 
 	from := mail.NewEmail("IP Checker", s.SenderEmail)
 	subject := "IP Checker Error"

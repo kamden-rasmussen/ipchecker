@@ -64,10 +64,10 @@ func (m MailgunProvider) SendErrorEmail() error {
 	return nil
 }
 
-func (m MailgunProvider) SendCloudflareErrorEmail() error {
+func (m MailgunProvider) SendDnsErrorEmail() error {
 	mg := mailgun.NewMailgun(m.Domain, m.ApiKey)
 
-	errMess := "There was an error updating your Cloudflare DNS record. Please check your internet connection and try again."
+	errMess := "There was an error updating your DNS record. Please check your internet connection and try again."
 
 	message := mg.NewMessage(m.SenderEmail, "IP Checker Error", errMess, m.ReceiverEmail)
 	message.SetHtml("<strong>" + errMess + "</strong>")
@@ -77,10 +77,10 @@ func (m MailgunProvider) SendCloudflareErrorEmail() error {
 
 	resp, id, err := mg.Send(ctx, message)
 	if err != nil {
-		println("error sending cloudflare error email: " + err.Error())
+		println("error sending DNS error email: " + err.Error())
 		return err
 	}
 
-	println("cloudflare error email sent successfully. ID: " + id + ", Response: " + resp)
+	println("DNS error email sent successfully. ID: " + id + ", Response: " + resp)
 	return nil
 }

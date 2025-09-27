@@ -23,7 +23,7 @@ type DnsHost interface {
 type EmailProvider interface {
 	SendEmail(string) error
 	SendErrorEmail() error
-	SendCloudflareErrorEmail() error
+	SendDnsErrorEmail() error
 }
 
 func main() {
@@ -130,7 +130,7 @@ func RunCheck() {
 			code, err := dnsHost.PutNewIP(ip)
 			if err != nil || code != 200 {
 				fmt.Printf("Failed to update DNS record. Status code %d\n", code)
-				emailProvider.SendCloudflareErrorEmail()
+				emailProvider.SendDnsErrorEmail()
 			} else {
 				println("Successfully updated DNS record")
 			}
