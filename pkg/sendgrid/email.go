@@ -1,4 +1,4 @@
-package email
+package sendgrid
 
 import (
 	"strconv"
@@ -8,9 +8,10 @@ import (
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
-func SendEmail(newIp string) error {
+type SendGridProvider struct{}
+
+func (s SendGridProvider) SendEmail(newIp string) error {
 	if env.GetKey("SENDGRID_API_KEY") == "" {
-		// Don't send an email if they don't have it defined
 		println("SendGrid not configured, skipping email...")
 		return nil
 	}
@@ -18,12 +19,10 @@ func SendEmail(newIp string) error {
 	senderEmail := env.GetKey("SENDER_EMAIL")
 	receiverEmail := env.GetKey("RECEIVER_EMAIL")
 
-	// email
 	from := mail.NewEmail("IP Checker", senderEmail)
 	subject := "New IP Address"
 	to := mail.NewEmail("Friend", receiverEmail)
 
-	// body
 	plainTextContent := "Your new IP address is: " + newIp
 	htmlContent := "<strong>Your new IP address is: " + newIp + "</strong>"
 
@@ -40,9 +39,8 @@ func SendEmail(newIp string) error {
 	return nil
 }
 
-func SendErrorEmail() error {
+func (s SendGridProvider) SendErrorEmail() error {
 	if env.GetKey("SENDGRID_API_KEY") == "" {
-		// Don't send an email if they don't have it defined
 		println("SendGrid not configured, skipping email...")
 		return nil
 	}
@@ -52,12 +50,10 @@ func SendErrorEmail() error {
 	senderEmail := env.GetKey("SENDER_EMAIL")
 	receiverEmail := env.GetKey("RECEIVER_EMAIL")
 
-	// email
 	from := mail.NewEmail("IP Checker", senderEmail)
 	subject := "IP Checker Error"
 	to := mail.NewEmail("Friend", receiverEmail)
 
-	// body
 	plainTextContent := errMess
 	htmlContent := "<strong>" + errMess + "</strong>"
 
@@ -74,19 +70,16 @@ func SendErrorEmail() error {
 	return nil
 }
 
-func SendCloudflareErrorEmail() error {
-
+func (s SendGridProvider) SendCloudflareErrorEmail() error {
 	errMess := "There was an error updating your Cloudflare DNS record. Please check your internet connection and try again."
 
 	senderEmail := env.GetKey("SENDER_EMAIL")
 	receiverEmail := env.GetKey("RECEIVER_EMAIL")
 
-	// email
 	from := mail.NewEmail("IP Checker", senderEmail)
 	subject := "IP Checker Error"
 	to := mail.NewEmail("Friend", receiverEmail)
 
-	// body
 	plainTextContent := errMess
 	htmlContent := "<strong>" + errMess + "</strong>"
 
@@ -101,4 +94,19 @@ func SendCloudflareErrorEmail() error {
 		println(response.StatusCode)
 	}
 	return nil
+}
+
+func SendEmail(newIp string) error {
+	provider := SendGridProvider{}
+	return provider.SendEmail(newIp)
+}
+
+func SendErrorEmail() error {
+	provider := SendGridProvider{}
+	return provider.SendErrorEmail()
+}
+
+func SendCloudflareErrorEmail() error {
+	provider := SendGridProvider{}
+	return provider.SendCloudflareErrorEmail()
 }
