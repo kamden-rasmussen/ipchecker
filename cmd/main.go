@@ -95,11 +95,21 @@ func RunCheck() {
 	// Set up email provider
 	switch strings.ToUpper(emailProviderType) {
 	case "SENDGRID":
-		emailProvider = sendgrid.SendGridProvider{}
+		emailProvider = sendgrid.SendGridProvider{
+			ApiKey:        env.GetKey("SENDGRID_API_KEY"),
+			SenderEmail:   env.GetKey("SENDER_EMAIL"),
+			ReceiverEmail: env.GetKey("RECEIVER_EMAIL"),
+		}
 	case "MAILGUN":
-		emailProvider = mailgun.MailgunProvider{}
+		emailProvider = mailgun.MailgunProvider{
+			ApiKey:        env.GetKey("MAILGUN_API_KEY"),
+			Domain:        env.GetKey("MAILGUN_DOMAIN"),
+			SenderEmail:   env.GetKey("SENDER_EMAIL"),
+			ReceiverEmail: env.GetKey("RECEIVER_EMAIL"),
+		}
 	default:
-		emailProvider = sendgrid.SendGridProvider{} // default to sendgrid
+		println("Email provider not implemented yet")
+		return
 	}
 
 	ip := check.CheckIp()

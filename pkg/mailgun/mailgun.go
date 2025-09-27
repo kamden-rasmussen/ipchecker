@@ -4,24 +4,25 @@ import (
 	"context"
 	"time"
 
-	"github.com/kamden-rasmussen/ipchecker/pkg/env"
 	"github.com/mailgun/mailgun-go/v4"
 )
 
-type MailgunProvider struct{}
+type MailgunProvider struct {
+	ApiKey        string
+	Domain        string
+	SenderEmail   string
+	ReceiverEmail string
+}
 
 func (m MailgunProvider) SendEmail(newIp string) error {
-	if env.GetKey("MAILGUN_API_KEY") == "" {
+	if m.ApiKey == "" {
 		println("Mailgun not configured, skipping email...")
 		return nil
 	}
 
-	mg := mailgun.NewMailgun(env.GetKey("MAILGUN_DOMAIN"), env.GetKey("MAILGUN_API_KEY"))
+	mg := mailgun.NewMailgun(m.Domain, m.ApiKey)
 
-	senderEmail := env.GetKey("SENDER_EMAIL")
-	receiverEmail := env.GetKey("RECEIVER_EMAIL")
-
-	message := mg.NewMessage(senderEmail, "New IP Address", "Your new IP address is: "+newIp, receiverEmail)
+	message := mg.NewMessage(m.SenderEmail, "New IP Address", "Your new IP address is: "+newIp, m.ReceiverEmail)
 	message.SetHtml("<strong>Your new IP address is: " + newIp + "</strong>")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
@@ -38,19 +39,16 @@ func (m MailgunProvider) SendEmail(newIp string) error {
 }
 
 func (m MailgunProvider) SendErrorEmail() error {
-	if env.GetKey("MAILGUN_API_KEY") == "" {
+	if m.ApiKey == "" {
 		println("Mailgun not configured, skipping email...")
 		return nil
 	}
 
-	mg := mailgun.NewMailgun(env.GetKey("MAILGUN_DOMAIN"), env.GetKey("MAILGUN_API_KEY"))
+	mg := mailgun.NewMailgun(m.Domain, m.ApiKey)
 
 	errMess := "There was an error checking your IP address. Please check your internet connection and try again."
 
-	senderEmail := env.GetKey("SENDER_EMAIL")
-	receiverEmail := env.GetKey("RECEIVER_EMAIL")
-
-	message := mg.NewMessage(senderEmail, "IP Checker Error", errMess, receiverEmail)
+	message := mg.NewMessage(m.SenderEmail, "IP Checker Error", errMess, m.ReceiverEmail)
 	message.SetHtml("<strong>" + errMess + "</strong>")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
@@ -67,14 +65,11 @@ func (m MailgunProvider) SendErrorEmail() error {
 }
 
 func (m MailgunProvider) SendCloudflareErrorEmail() error {
-	mg := mailgun.NewMailgun(env.GetKey("MAILGUN_DOMAIN"), env.GetKey("MAILGUN_API_KEY"))
+	mg := mailgun.NewMailgun(m.Domain, m.ApiKey)
 
 	errMess := "There was an error updating your Cloudflare DNS record. Please check your internet connection and try again."
 
-	senderEmail := env.GetKey("SENDER_EMAIL")
-	receiverEmail := env.GetKey("RECEIVER_EMAIL")
-
-	message := mg.NewMessage(senderEmail, "IP Checker Error", errMess, receiverEmail)
+	message := mg.NewMessage(m.SenderEmail, "IP Checker Error", errMess, m.ReceiverEmail)
 	message.SetHtml("<strong>" + errMess + "</strong>")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
@@ -88,19 +83,4 @@ func (m MailgunProvider) SendCloudflareErrorEmail() error {
 
 	println("cloudflare error email sent successfully. ID: " + id + ", Response: " + resp)
 	return nil
-}
-
-func SendEmail(newIp string) error {
-	provider := MailgunProvider{}
-	return provider.SendEmail(newIp)
-}
-
-func SendErrorEmail() error {
-	provider := MailgunProvider{}
-	return provider.SendErrorEmail()
-}
-
-func SendCloudflareErrorEmail() error {
-	provider := MailgunProvider{}
-	return provider.SendCloudflareErrorEmail()
 }
