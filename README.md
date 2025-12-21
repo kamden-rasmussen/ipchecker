@@ -1,6 +1,6 @@
 # IPChecker
 
-IPChecker is a simple Go application that periodically checks your public IP address and can send you an email when it changes. This can be useful if you need to remotely access your home network and your ISP assigns you a dynamic IP address. Used for Dynamic Domain Name Service (DDNS) purposes.
+IPChecker is a simple Go application that periodically checks your public IP address and can be configured to send you an email and/or update your DNS of choice when it changes. This can be useful if you need to remotely access your home network and your ISP assigns you a dynamic IP address. Used for Dynamic Domain Name Service (DDNS) purposes.
 
 ## Prerequisites
 
