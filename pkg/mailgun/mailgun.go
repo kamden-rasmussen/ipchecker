@@ -14,16 +14,11 @@ type MailgunProvider struct {
 	ReceiverEmail string
 }
 
-func (m MailgunProvider) SendEmail(newIp string) error {
-	if m.ApiKey == "" {
-		println("Mailgun not configured, skipping email...")
-		return nil
-	}
-
+func (m MailgunProvider) send(subject, text, html string) error {
 	mg := mailgun.NewMailgun(m.Domain, m.ApiKey)
 
-	message := mg.NewMessage(m.SenderEmail, "New IP Address", "Your new IP address is: "+newIp, m.ReceiverEmail)
-	message.SetHtml("<strong>Your new IP address is: " + newIp + "</strong>")
+	message := mg.NewMessage(m.SenderEmail, subject, text, m.ReceiverEmail)
+	message.SetHtml(html)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
@@ -38,49 +33,26 @@ func (m MailgunProvider) SendEmail(newIp string) error {
 	return nil
 }
 
+func (m MailgunProvider) SendEmail(newIp string) error {
+	if m.ApiKey == "" {
+		println("Mailgun not configured, skipping email...")
+		return nil
+	}
+
+	return m.send("New IP Address", "Your new IP address is: "+newIp, "<strong>Your new IP address is: "+newIp+"</strong>")
+}
+
 func (m MailgunProvider) SendErrorEmail() error {
 	if m.ApiKey == "" {
 		println("Mailgun not configured, skipping email...")
 		return nil
 	}
 
-	mg := mailgun.NewMailgun(m.Domain, m.ApiKey)
-
 	errMess := "There was an error checking your IP address. Please check your internet connection and try again."
-
-	message := mg.NewMessage(m.SenderEmail, "IP Checker Error", errMess, m.ReceiverEmail)
-	message.SetHtml("<strong>" + errMess + "</strong>")
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	defer cancel()
-
-	resp, id, err := mg.Send(ctx, message)
-	if err != nil {
-		println("error sending error email: " + err.Error())
-		return err
-	}
-
-	println("error email sent successfully. ID: " + id + ", Response: " + resp)
-	return nil
+	return m.send("IP Checker Error", errMess, "<strong>"+errMess+"</strong>")
 }
 
 func (m MailgunProvider) SendDnsErrorEmail() error {
-	mg := mailgun.NewMailgun(m.Domain, m.ApiKey)
-
 	errMess := "There was an error updating your DNS record. Please check your internet connection and try again."
-
-	message := mg.NewMessage(m.SenderEmail, "IP Checker Error", errMess, m.ReceiverEmail)
-	message.SetHtml("<strong>" + errMess + "</strong>")
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	defer cancel()
-
-	resp, id, err := mg.Send(ctx, message)
-	if err != nil {
-		println("error sending DNS error email: " + err.Error())
-		return err
-	}
-
-	println("DNS error email sent successfully. ID: " + id + ", Response: " + resp)
-	return nil
+	return m.send("IP Checker Error", errMess, "<strong>"+errMess+"</strong>")
 }
