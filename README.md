@@ -9,10 +9,10 @@ Before running IPChecker, you need to have the following:
 1. A stationary system that can run Go applications
 2. Docker installed on the system
 
-If you want to use SendGrid, you will also need the following
+If you want to use an email provider (SendGrid, Mailgun, or Resend), you will also need the following
 
 1. A working email account that can send and receive emails
-2. A SendGrid account and API key
+2. An account and API key for your chosen email provider
 
 ## Installation
 
@@ -67,13 +67,31 @@ If you want to use SendGrid, you will also need the following
 | RECEIVER_EMAIL   | Email to send the notification to   |
 | SENDGRID_API_KEY | API key for SendGrid                |
 
+### Mailgun:
+
+| Name             | Description                         |
+|  --------        |  -------                            |
+| SENDER_EMAIL     | Email to send the notification from |
+| RECEIVER_EMAIL   | Email to send the notification to   |
+| MAILGUN_API_KEY  | API key for Mailgun                 |
+| MAILGUN_DOMAIN   | Your Mailgun sending domain         |
+
+### Resend:
+
+| Name           | Description                         |
+|  --------      |  -------                            |
+| SENDER_EMAIL   | Email to send the notification from |
+| RECEIVER_EMAIL | Email to send the notification to   |
+| RESEND_API_KEY | API key for Resend                  |
+
 ### Misc:
 
 | Name            | Description    |
 |  --------       |  -------       |
 | CURRENT_IP | Set this to be any IP value. Ex "111.111.111.111". Used as reference during the IP check to see if the IP has changed |
-| DNSHOST    | Set this to `cloudflare`, `godaddy`, or `na` for your DNS |
-| UPDATEDNS  | set this to `true` or `false` depending on if you want your dns to update |
+| DNSHOST        | Set this to `cloudflare`, `godaddy`, or `na` for your DNS                                  |
+| UPDATEDNS      | Set this to `true` or `false` depending on if you want your DNS to update                   |
+| EMAIL_PROVIDER | Set this to `sendgrid`, `mailgun`, or `resend` depending on your email provider of choice   |
 
 ## License
 
