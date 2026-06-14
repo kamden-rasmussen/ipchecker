@@ -10,24 +10,28 @@ type ResendProvider struct {
 	ReceiverEmail string
 }
 
+func (r ResendProvider) send(subject, text string) error {
+	client := resendgo.NewClient(r.ApiKey)
+
+	params := &resendgo.SendEmailRequest{
+		From:    r.SenderEmail,
+		To:      []string{r.ReceiverEmail},
+		Subject: subject,
+		Html:    "<strong>" + text + "</strong>",
+		Text:    text,
+	}
+
+	_, err := client.Emails.Send(params)
+	return err
+}
+
 func (r ResendProvider) SendEmail(newIp string) error {
 	if r.ApiKey == "" {
 		println("Resend not configured, skipping email...")
 		return nil
 	}
 
-	client := resendgo.NewClient(r.ApiKey)
-
-	params := &resendgo.SendEmailRequest{
-		From:    r.SenderEmail,
-		To:      []string{r.ReceiverEmail},
-		Subject: "New IP Address",
-		Html:    "<strong>Your new IP address is: " + newIp + "</strong>",
-		Text:    "Your new IP address is: " + newIp,
-	}
-
-	_, err := client.Emails.Send(params)
-	if err != nil {
+	if err := r.send("New IP Address", "Your new IP address is: "+newIp); err != nil {
 		println("error sending email: " + err.Error())
 		return err
 	}
@@ -42,20 +46,7 @@ func (r ResendProvider) SendErrorEmail() error {
 		return nil
 	}
 
-	client := resendgo.NewClient(r.ApiKey)
-
-	errMess := "There was an error checking your IP address. Please check your internet connection and try again."
-
-	params := &resendgo.SendEmailRequest{
-		From:    r.SenderEmail,
-		To:      []string{r.ReceiverEmail},
-		Subject: "IP Checker Error",
-		Html:    "<strong>" + errMess + "</strong>",
-		Text:    errMess,
-	}
-
-	_, err := client.Emails.Send(params)
-	if err != nil {
+	if err := r.send("IP Checker Error", "There was an error checking your IP address. Please check your internet connection and try again."); err != nil {
 		println("error sending error email: " + err.Error())
 		return err
 	}
@@ -65,20 +56,7 @@ func (r ResendProvider) SendErrorEmail() error {
 }
 
 func (r ResendProvider) SendDnsErrorEmail() error {
-	client := resendgo.NewClient(r.ApiKey)
-
-	errMess := "There was an error updating your DNS record. Please check your internet connection and try again."
-
-	params := &resendgo.SendEmailRequest{
-		From:    r.SenderEmail,
-		To:      []string{r.ReceiverEmail},
-		Subject: "IP Checker Error",
-		Html:    "<strong>" + errMess + "</strong>",
-		Text:    errMess,
-	}
-
-	_, err := client.Emails.Send(params)
-	if err != nil {
+	if err := r.send("IP Checker Error", "There was an error updating your DNS record. Please check your internet connection and try again."); err != nil {
 		println("error sending DNS error email: " + err.Error())
 		return err
 	}
