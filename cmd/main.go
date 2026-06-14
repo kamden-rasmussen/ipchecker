@@ -13,6 +13,7 @@ import (
 	"github.com/kamden-rasmussen/ipchecker/pkg/env"
 	"github.com/kamden-rasmussen/ipchecker/pkg/godaddy"
 	"github.com/kamden-rasmussen/ipchecker/pkg/mailgun"
+	"github.com/kamden-rasmussen/ipchecker/pkg/resend"
 	"github.com/kamden-rasmussen/ipchecker/pkg/sendgrid"
 )
 
@@ -104,6 +105,12 @@ func RunCheck() {
 		emailProvider = mailgun.MailgunProvider{
 			ApiKey:        env.GetKey("MAILGUN_API_KEY"),
 			Domain:        env.GetKey("MAILGUN_DOMAIN"),
+			SenderEmail:   env.GetKey("SENDER_EMAIL"),
+			ReceiverEmail: env.GetKey("RECEIVER_EMAIL"),
+		}
+	case "RESEND":
+		emailProvider = resend.ResendProvider{
+			ApiKey:        env.GetKey("RESEND_API_KEY"),
 			SenderEmail:   env.GetKey("SENDER_EMAIL"),
 			ReceiverEmail: env.GetKey("RECEIVER_EMAIL"),
 		}
