@@ -1,0 +1,10 @@
+services:
+  ipchecker:
+    image: ghcr.io/kamden-rasmussen/ipchecker:latest
+    container_name: ipchecker
+    restart: unless-stopped
+    environment:
+      - CURRENT_IP=${CURRENT_IP:-111.111.111.111}
+      - DNSHOST=${DNS_HOST:-na}
+      - UPDATEDNS=${UPDATE_DNS:-false}
+      - EMAIL_PROVIDER=${EMAIL_PROVIDER}
