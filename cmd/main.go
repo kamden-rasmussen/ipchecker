@@ -90,7 +90,7 @@ func RunCheck() {
 	case "NA": // if you do not have a DNS set up and just want the email
 		break
 	default:
-		println("DNS provider not implemented yet")
+		println("DNS provider not implemented yet. Please choose a supported DNS provider")
 		return
 	}
 
