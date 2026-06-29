@@ -24,6 +24,9 @@ curl -X PUT "https://api.godaddy.com/v1/domains/$domain/records/$type/$name" \
 */
 
 func (g Godaddy) PutNewIP(ip string) (int, error) {
+	if g.Domain == "" || g.Key == "" || g.Secret == "" || g.Type == "" || g.Name == "" {
+		return -1, fmt.Errorf("GoDaddy config invalid. Please ensure all envs for GoDaddy are properly defined")
+	}
 
 	// add ip to the body
 	body := fmt.Sprintf(`[{"data":"%s"}]`, ip)

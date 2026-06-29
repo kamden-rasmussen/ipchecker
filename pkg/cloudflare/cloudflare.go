@@ -23,6 +23,9 @@ type Cloudflare struct {
 //      --data '{"type":"A","name":"example.com","content":"yournewiphere","ttl":1,"proxied":false}'
 
 func (c Cloudflare) PutNewIP(ip string) (int, error) {
+	if c.APIKey == "" || c.ZoneID == "" || c.DNSID == "" {
+		return -1, fmt.Errorf("Cloudflare config invalid. Please ensure all envs for Cloudflare are properly defined")
+	}
 
 	// add ip to the body
 	body := fmt.Sprintf(`{"type":"A","name":"%s","content":"%s","ttl":1,"proxied":false}`, c.DomainName, ip)

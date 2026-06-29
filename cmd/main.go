@@ -137,7 +137,13 @@ func RunCheck() {
 		if shouldUpdate {
 			code, err := dnsHost.PutNewIP(ip)
 			if err != nil || code != 200 {
-				fmt.Printf("Failed to update DNS record. Status code %d\n", code)
+				msg := fmt.Sprintf("Failed to update DNS record. Status code %d", code)
+
+				if err != nil {
+					msg = fmt.Sprintf("%s - error %s", msg, err)
+				}
+
+				fmt.Println(msg)
 
 				emailErr := emailProvider.SendDNSErrorEmail()
 				if emailErr != nil {
