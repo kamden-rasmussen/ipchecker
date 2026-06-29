@@ -11,7 +11,7 @@ import (
 // {"ip":"111.111.111.111"} // your ip address
 
 func GetIpify() string {
-	var IpIfy IpIfyResp
+	var IPIfy IPIfyResp
 
 	resp, err := http.Get("http://api.ipify.org?format=json")
 	if err != nil {
@@ -25,11 +25,11 @@ func GetIpify() string {
 		return ""
 	}
 
-	err = json.Unmarshal(bytes, &IpIfy)
+	err = json.Unmarshal(bytes, &IPIfy)
 	if err != nil {
 		println(err)
 		return ""
 	}
 
-	return IpIfy.Ip
+	return IPIfy.IP
 }

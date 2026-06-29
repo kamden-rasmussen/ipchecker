@@ -8,7 +8,7 @@ import (
 )
 
 type SendGridProvider struct {
-	ApiKey        string
+	APIKey        string
 	SenderEmail   string
 	ReceiverEmail string
 }
@@ -19,7 +19,7 @@ func (s SendGridProvider) send(subject, text, html string) error {
 
 	message := mail.NewSingleEmail(from, subject, to, text, html)
 
-	client := sendgrid.NewSendClient(s.ApiKey)
+	client := sendgrid.NewSendClient(s.APIKey)
 	response, err := client.Send(message)
 	if err != nil || response.StatusCode != 202 {
 		println("error sending email. Status code " + strconv.Itoa(response.StatusCode))
@@ -29,7 +29,7 @@ func (s SendGridProvider) send(subject, text, html string) error {
 }
 
 func (s SendGridProvider) SendEmail(newIp string) error {
-	if s.ApiKey == "" {
+	if s.APIKey == "" {
 		println("SendGrid not configured, skipping email...")
 		return nil
 	}
@@ -44,7 +44,7 @@ func (s SendGridProvider) SendEmail(newIp string) error {
 }
 
 func (s SendGridProvider) SendErrorEmail() error {
-	if s.ApiKey == "" {
+	if s.APIKey == "" {
 		println("SendGrid not configured, skipping email...")
 		return nil
 	}
@@ -57,7 +57,7 @@ func (s SendGridProvider) SendErrorEmail() error {
 	return nil
 }
 
-func (s SendGridProvider) SendDnsErrorEmail() error {
+func (s SendGridProvider) SendDNSErrorEmail() error {
 	errMess := "There was an error updating your DNS record. Please check your internet connection and try again."
 	if err := s.send("IP Checker Error", errMess, "<strong>"+errMess+"</strong>"); err != nil {
 		println(err.Error())

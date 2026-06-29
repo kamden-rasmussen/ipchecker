@@ -12,17 +12,17 @@ type Check struct {
 	Address string
 }
 
-type IpIfyResp struct {
-	Ip string `json:"ip,omitempty"`
+type IPIfyResp struct {
+	IP string `json:"ip,omitempty"`
 }
 
-func CheckIp() string {
+func CheckIP() string {
 	println("\n\n" + time.Now().Format("2006-01-02 15:04:05"))
 
 	// get current ip
-	currentIp := GetIpify()
+	currentIP := GetIpify()
 
-	if currentIp == "" || currentIp == "No answer" {
+	if currentIP == "" || currentIP == "No answer" {
 		outageCount, _ := strconv.Atoi(env.GetKey("OUTAGE_COUNT"))
 		env.SetKey("OUTAGE_COUNT", strconv.Itoa(outageCount+1))
 		println("Outage count: " + env.GetKey("OUTAGE_COUNT"))
@@ -35,14 +35,14 @@ func CheckIp() string {
 	// get old ip
 	oldIp := env.GetKey("CURRENT_IP")
 
-	print("old ip: " + oldIp + " current ip: " + currentIp + "\n")
-	if currentIp != oldIp {
+	print("old ip: " + oldIp + " current ip: " + currentIP + "\n")
+	if currentIP != oldIp {
 		// set new ip
-		env.SetKey("CURRENT_IP", currentIp)
+		env.SetKey("CURRENT_IP", currentIP)
 		println("current env: " + env.GetKey("CURRENT_IP"))
-		println("New IP found: " + currentIp)
+		println("New IP found: " + currentIP)
 
-		return currentIp
+		return currentIP
 	}
 
 	return ""

@@ -1,6 +1,7 @@
 package env
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -13,9 +14,10 @@ func InitEnv() {
 }
 
 func openEnvFile() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	err := godotenv.Load()
+	if err != nil && !os.IsNotExist(err) {
+		fmt.Printf("Error loading .env file: %s\n", err)
+		os.Exit(1)
 	}
 }
 
@@ -25,5 +27,8 @@ func GetKey(key string) string {
 
 func SetKey(key string, value string) {
 	println("setting env: " + key + " to " + value)
-	os.Setenv(key, value)
+	err := os.Setenv(key, value)
+	if err != nil {
+		log.Printf("error setting env key: %v", err)
+	}
 }

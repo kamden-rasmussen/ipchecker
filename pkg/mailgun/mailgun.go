@@ -8,17 +8,17 @@ import (
 )
 
 type MailgunProvider struct {
-	ApiKey        string
+	APIKey        string
 	Domain        string
 	SenderEmail   string
 	ReceiverEmail string
 }
 
 func (m MailgunProvider) send(subject, text, html string) error {
-	mg := mailgun.NewMailgun(m.Domain, m.ApiKey)
+	mg := mailgun.NewMailgun(m.Domain, m.APIKey)
 
-	message := mg.NewMessage(m.SenderEmail, subject, text, m.ReceiverEmail)
-	message.SetHtml(html)
+	message := mailgun.NewMessage(m.SenderEmail, subject, text, m.ReceiverEmail)
+	message.SetHTML(html)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
@@ -33,17 +33,17 @@ func (m MailgunProvider) send(subject, text, html string) error {
 	return nil
 }
 
-func (m MailgunProvider) SendEmail(newIp string) error {
-	if m.ApiKey == "" {
+func (m MailgunProvider) SendEmail(newIP string) error {
+	if m.APIKey == "" {
 		println("Mailgun not configured, skipping email...")
 		return nil
 	}
 
-	return m.send("New IP Address", "Your new IP address is: "+newIp, "<strong>Your new IP address is: "+newIp+"</strong>")
+	return m.send("New IP Address", "Your new IP address is: "+newIP, "<strong>Your new IP address is: "+newIP+"</strong>")
 }
 
 func (m MailgunProvider) SendErrorEmail() error {
-	if m.ApiKey == "" {
+	if m.APIKey == "" {
 		println("Mailgun not configured, skipping email...")
 		return nil
 	}
@@ -52,7 +52,7 @@ func (m MailgunProvider) SendErrorEmail() error {
 	return m.send("IP Checker Error", errMess, "<strong>"+errMess+"</strong>")
 }
 
-func (m MailgunProvider) SendDnsErrorEmail() error {
+func (m MailgunProvider) SendDNSErrorEmail() error {
 	errMess := "There was an error updating your DNS record. Please check your internet connection and try again."
 	return m.send("IP Checker Error", errMess, "<strong>"+errMess+"</strong>")
 }
