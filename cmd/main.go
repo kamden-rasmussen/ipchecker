@@ -10,6 +10,7 @@ import (
 	"github.com/kamden-rasmussen/ipchecker/pkg/check"
 	"github.com/kamden-rasmussen/ipchecker/pkg/cloudflare"
 	"github.com/kamden-rasmussen/ipchecker/pkg/cron"
+	"github.com/kamden-rasmussen/ipchecker/pkg/empty"
 	"github.com/kamden-rasmussen/ipchecker/pkg/env"
 	"github.com/kamden-rasmussen/ipchecker/pkg/godaddy"
 	"github.com/kamden-rasmussen/ipchecker/pkg/mailgun"
@@ -115,8 +116,8 @@ func RunCheck() {
 			ReceiverEmail: env.GetKey("RECEIVER_EMAIL"),
 		}
 	default:
-		println("Email provider not implemented")
-		return
+		println("Email provider not implemented. No emails will be sent")
+		emailProvider = empty.EmptyProvider{}
 	}
 
 	ip := check.CheckIP()
