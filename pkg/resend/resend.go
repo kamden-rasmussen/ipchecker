@@ -5,13 +5,13 @@ import (
 )
 
 type ResendProvider struct {
-	ApiKey        string
+	APIKey        string
 	SenderEmail   string
 	ReceiverEmail string
 }
 
 func (r ResendProvider) send(subject, text string) error {
-	client := resendgo.NewClient(r.ApiKey)
+	client := resendgo.NewClient(r.APIKey)
 
 	params := &resendgo.SendEmailRequest{
 		From:    r.SenderEmail,
@@ -25,13 +25,13 @@ func (r ResendProvider) send(subject, text string) error {
 	return err
 }
 
-func (r ResendProvider) SendEmail(newIp string) error {
-	if r.ApiKey == "" {
+func (r ResendProvider) SendEmail(newIP string) error {
+	if r.APIKey == "" {
 		println("Resend not configured, skipping email...")
 		return nil
 	}
 
-	if err := r.send("New IP Address", "Your new IP address is: "+newIp); err != nil {
+	if err := r.send("New IP Address", "Your new IP address is: "+newIP); err != nil {
 		println("error sending email: " + err.Error())
 		return err
 	}
@@ -41,7 +41,7 @@ func (r ResendProvider) SendEmail(newIp string) error {
 }
 
 func (r ResendProvider) SendErrorEmail() error {
-	if r.ApiKey == "" {
+	if r.APIKey == "" {
 		println("Resend not configured, skipping email...")
 		return nil
 	}
@@ -55,7 +55,7 @@ func (r ResendProvider) SendErrorEmail() error {
 	return nil
 }
 
-func (r ResendProvider) SendDnsErrorEmail() error {
+func (r ResendProvider) SendDNSErrorEmail() error {
 	if err := r.send("IP Checker Error", "There was an error updating your DNS record. Please check your internet connection and try again."); err != nil {
 		println("error sending DNS error email: " + err.Error())
 		return err

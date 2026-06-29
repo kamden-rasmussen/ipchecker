@@ -9,9 +9,9 @@ import (
 
 type Cloudflare struct {
 	ZoneID     string
-	DnsID      string
+	DNSID      string
 	Email      string
-	ApiKey     string
+	APIKey     string
 	DomainName string
 }
 
@@ -28,14 +28,14 @@ func (c Cloudflare) PutNewIP(ip string) (int, error) {
 	body := fmt.Sprintf(`{"type":"A","name":"%s","content":"%s","ttl":1,"proxied":false}`, c.DomainName, ip)
 
 	// create the request
-	req, err := http.NewRequest("PUT", "https://api.cloudflare.com/client/v4/zones/"+c.ZoneID+"/dns_records/"+c.DnsID, strings.NewReader(body))
+	req, err := http.NewRequest("PUT", "https://api.cloudflare.com/client/v4/zones/"+c.ZoneID+"/dns_records/"+c.DNSID, strings.NewReader(body))
 	if err != nil {
 		return -1, err
 	}
 
 	// add the headers
 	req.Header.Add("X-Auth-Email", c.Email)
-	req.Header.Add("Authorization", c.ApiKey)
+	req.Header.Add("Authorization", c.APIKey)
 	req.Header.Add("Content-Type", "application/json")
 
 	// send the request
@@ -44,7 +44,9 @@ func (c Cloudflare) PutNewIP(ip string) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != 200 {
 		// read the body

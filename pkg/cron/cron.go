@@ -1,6 +1,10 @@
 package cron
 
-import "github.com/robfig/cron/v3"
+import (
+	"log"
+
+	"github.com/robfig/cron/v3"
+)
 
 type Cron struct {
 	cronService *cron.Cron
@@ -12,7 +16,10 @@ func NewCron() *Cron {
 }
 
 func (c *Cron) AddFunc(spec string, cmd func()) {
-	c.cronService.AddFunc(spec, cmd)
+	_, err := c.cronService.AddFunc(spec, cmd)
+	if err != nil {
+		log.Printf("error adding cron service func: %v", err)
+	}
 }
 
 func (c *Cron) Start() {

@@ -17,14 +17,14 @@ import (
 	"github.com/kamden-rasmussen/ipchecker/pkg/sendgrid"
 )
 
-type DnsHost interface {
+type DNSHost interface {
 	PutNewIP(string) (int, error)
 }
 
 type EmailProvider interface {
 	SendEmail(string) error
 	SendErrorEmail() error
-	SendDnsErrorEmail() error
+	SendDNSErrorEmail() error
 }
 
 func main() {
@@ -55,7 +55,7 @@ func openLogFile() {
 }
 
 func RunCheck() {
-	var dnsHost DnsHost
+	var dnsHost DNSHost
 	var emailProvider EmailProvider
 
 	dnsProvider := env.GetKey("DNSHOST")
@@ -72,19 +72,19 @@ func RunCheck() {
 	switch strings.ToUpper(dnsProvider) {
 	case "CLOUDFLARE":
 		dnsHost = cloudflare.Cloudflare{
-			env.GetKey("CLOUDFLARE_ZONE_ID"),
-			env.GetKey("CLOUDFLARE_DNS_ID"),
-			env.GetKey("CLOUDFLARE_EMAIL"),
-			"Bearer " + env.GetKey("CLOUDFLARE_API_KEY"),
-			env.GetKey("CLOUDFLARE_DOMAIN_NAME"),
+			ZoneID:     env.GetKey("CLOUDFLARE_ZONE_ID"),
+			DNSID:      env.GetKey("CLOUDFLARE_DNS_ID"),
+			Email:      env.GetKey("CLOUDFLARE_EMAIL"),
+			APIKey:     "Bearer " + env.GetKey("CLOUDFLARE_API_KEY"),
+			DomainName: env.GetKey("CLOUDFLARE_DOMAIN_NAME"),
 		}
 	case "GODADDY":
 		dnsHost = godaddy.Godaddy{
-			env.GetKey("GODADDY_DOMAIN_NAME"),
-			env.GetKey("GODADDY_DNS_RECORD_TYPE"),
-			env.GetKey("GODADDY_DNS_RECORD_NAME"),
-			env.GetKey("GODADDY_API_KEY"),
-			env.GetKey("GODADDY_API_SECRET"),
+			Domain: env.GetKey("GODADDY_DOMAIN_NAME"),
+			Type:   env.GetKey("GODADDY_DNS_RECORD_TYPE"),
+			Name:   env.GetKey("GODADDY_DNS_RECORD_NAME"),
+			Key:    env.GetKey("GODADDY_API_KEY"),
+			Secret: env.GetKey("GODADDY_API_SECRET"),
 		}
 	case "NA": // if you do not have a DNS set up and just want the email
 		break
@@ -97,29 +97,29 @@ func RunCheck() {
 	switch strings.ToUpper(emailProviderType) {
 	case "SENDGRID":
 		emailProvider = sendgrid.SendGridProvider{
-			ApiKey:        env.GetKey("SENDGRID_API_KEY"),
+			APIKey:        env.GetKey("SENDGRID_API_KEY"),
 			SenderEmail:   env.GetKey("SENDER_EMAIL"),
 			ReceiverEmail: env.GetKey("RECEIVER_EMAIL"),
 		}
 	case "MAILGUN":
 		emailProvider = mailgun.MailgunProvider{
-			ApiKey:        env.GetKey("MAILGUN_API_KEY"),
+			APIKey:        env.GetKey("MAILGUN_API_KEY"),
 			Domain:        env.GetKey("MAILGUN_DOMAIN"),
 			SenderEmail:   env.GetKey("SENDER_EMAIL"),
 			ReceiverEmail: env.GetKey("RECEIVER_EMAIL"),
 		}
 	case "RESEND":
 		emailProvider = resend.ResendProvider{
-			ApiKey:        env.GetKey("RESEND_API_KEY"),
+			APIKey:        env.GetKey("RESEND_API_KEY"),
 			SenderEmail:   env.GetKey("SENDER_EMAIL"),
 			ReceiverEmail: env.GetKey("RECEIVER_EMAIL"),
 		}
 	default:
-		println("Email provider not implemented yet")
+		println("Email provider not implemented")
 		return
 	}
 
-	ip := check.CheckIp()
+	ip := check.CheckIP()
 	if ip == "outage" {
 		err := emailProvider.SendErrorEmail()
 		if err != nil {
@@ -137,7 +137,11 @@ func RunCheck() {
 			code, err := dnsHost.PutNewIP(ip)
 			if err != nil || code != 200 {
 				fmt.Printf("Failed to update DNS record. Status code %d\n", code)
-				emailProvider.SendDnsErrorEmail()
+
+				emailErr := emailProvider.SendDNSErrorEmail()
+				if emailErr != nil {
+					fmt.Printf("Error sending DNS email: %v\n", err)
+				}
 			} else {
 				println("Successfully updated DNS record")
 			}

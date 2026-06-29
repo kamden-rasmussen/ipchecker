@@ -25,5 +25,8 @@ func GetKey(key string) string {
 
 func SetKey(key string, value string) {
 	println("setting env: " + key + " to " + value)
-	os.Setenv(key, value)
+	err := os.Setenv(key, value)
+	if err != nil {
+		log.Printf("error setting env key: %v", err)
+	}
 }

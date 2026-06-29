@@ -23,8 +23,6 @@ curl -X PUT "https://api.godaddy.com/v1/domains/$domain/records/$type/$name" \
 -d "[{\"data\": \"$currentIp\"}]"
 */
 
-const BASE_URL = "https://api.godaddy.com/v1/domains"
-
 func (g Godaddy) PutNewIP(ip string) (int, error) {
 
 	// add ip to the body
@@ -32,7 +30,7 @@ func (g Godaddy) PutNewIP(ip string) (int, error) {
 
 	// create the request
 	req, err := http.NewRequest("PUT",
-		fmt.Sprintf("%s/%s/records/%s/%s", BASE_URL, g.Domain, g.Type, g.Name),
+		fmt.Sprintf("https://api.godaddy.com/v1/domains/%s/records/%s/%s", g.Domain, g.Type, g.Name),
 		strings.NewReader(body),
 	)
 	if err != nil {
@@ -50,7 +48,9 @@ func (g Godaddy) PutNewIP(ip string) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != 200 {
 		// read the body
