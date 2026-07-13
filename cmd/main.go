@@ -73,19 +73,21 @@ func RunCheck() {
 	switch strings.ToUpper(dnsProvider) {
 	case "CLOUDFLARE":
 		dnsHost = cloudflare.Cloudflare{
-			ZoneID:     env.GetKey("CLOUDFLARE_ZONE_ID"),
-			DNSID:      env.GetKey("CLOUDFLARE_DNS_ID"),
-			Email:      env.GetKey("CLOUDFLARE_EMAIL"),
-			APIKey:     "Bearer " + env.GetKey("CLOUDFLARE_API_KEY"),
-			DomainName: env.GetKey("CLOUDFLARE_DOMAIN_NAME"),
+			ZoneID:      env.GetKey("CLOUDFLARE_ZONE_ID"),
+			DNSID:       env.GetKey("CLOUDFLARE_DNS_ID"),
+			Email:       env.GetKey("CLOUDFLARE_EMAIL"),
+			APIKey:      "Bearer " + env.GetKey("CLOUDFLARE_API_KEY"),
+			DomainName:  env.GetKey("CLOUDFLARE_DOMAIN_NAME"),
+			DomainNames: strings.Split(env.GetKey("CLOUDFLARE_DOMAIN_NAMES"), ","),
 		}
 	case "GODADDY":
 		dnsHost = godaddy.Godaddy{
-			Domain: env.GetKey("GODADDY_DOMAIN_NAME"),
-			Type:   env.GetKey("GODADDY_DNS_RECORD_TYPE"),
-			Name:   env.GetKey("GODADDY_DNS_RECORD_NAME"),
-			Key:    env.GetKey("GODADDY_API_KEY"),
-			Secret: env.GetKey("GODADDY_API_SECRET"),
+			Domain:  env.GetKey("GODADDY_DOMAIN_NAME"),
+			Domains: strings.Split(env.GetKey("GODADDY_DOMAIN_NAMES"), ","),
+			Type:    env.GetKey("GODADDY_DNS_RECORD_TYPE"),
+			Name:    env.GetKey("GODADDY_DNS_RECORD_NAME"),
+			Key:     env.GetKey("GODADDY_API_KEY"),
+			Secret:  env.GetKey("GODADDY_API_SECRET"),
 		}
 	case "NA": // if you do not have a DNS set up and just want the email
 		break
@@ -149,8 +151,6 @@ func RunCheck() {
 				if emailErr != nil {
 					fmt.Printf("Error sending DNS email: %v\n", err)
 				}
-			} else {
-				println("Successfully updated DNS record")
 			}
 		}
 	}

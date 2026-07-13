@@ -47,6 +47,7 @@ If you want to use an email provider (SendGrid, Mailgun, or Resend), you will al
 | CLOUDFLARE_API_KEY     | API key from Cloudflare           |
 | CLOUDFLARE_EMAIL       | Email used to login to Cloudflare |
 | CLOUDFLARE_DOMAIN_NAME | The domain you want updated       |
+| CLOUDFLARE_DOMAIN_NAMES | Multiple domains you want updated, in the form of `domain1.com,domain2.com,...`. Takes precedence over `CLOUDFLARE_DOMAIN_NAME` |
 
 ### GoDaddy:
 
@@ -57,6 +58,7 @@ If you want to use an email provider (SendGrid, Mailgun, or Resend), you will al
 | GODADDY_DNS_RECORD_NAME | The subdomain, can be '@' for your plain domain              |
 | GODADDY_DNS_RECORD_TYPE | Record type. A, AAAA, MX, etc.                               |
 | GODADDY_DOMAIN_NAME     | The domain without the subdomain                             |
+| GODADDY_DOMAIN_NAMES    | Multiple domains you want updated, in the form of `domain1.com,domain2.com,...`. Takes precedence over `GODADDY_DOMAIN_NAME` |
 
 
 ### SendGrid:
